@@ -16,7 +16,3 @@ type LatticeParams struct {
 func ConstructLattice(params LatticeParams) *Lattice {
 	return &Lattice{}
 }
-
-func SingleIteration(l *Lattice) (bool, error) {
-	return true, nil
-}

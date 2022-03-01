@@ -60,10 +60,11 @@ func main() {
 		topology:   params.topology,
 	})
 	latticeHandlers := getLatticeHandlers()
+	o := Orchestrator{}
 	defer lattice.cleanup()
 
 	for i := uint(0); i < params.iterations; i++ {
-		isChanged, err := SingleIteration(lattice)
+		isChanged, err := o.SingleIteration(lattice)
 		if err != nil {
 			fmt.Println(err)
 			return
