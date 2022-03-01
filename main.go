@@ -37,9 +37,9 @@ func parseArguments() (*InputParameters, error) {
 
 	flag.UintVar(&params.iterations, "iterations", 100, "Max number of iterations to simulate game of life. If stable solution, will exit early.")
 	flag.UintVar(&params.gridSize, "gridsize", 20, "Length of square grid to define game on.")
-	flag.Float64Var(&params.aliveRatio, "aliveratio", 0.8, "The fraction of squares that start as alive, assigned at random. Domain: [0.0, 1.0]")
+	flag.Float64Var(&params.aliveRatio, "aliveratio", 0.8, "The fraction of squares that start as alive, assigned at random. Domain: [0.0, 1.0].")
 	flag.UintVar(&params.updateDelay, "updatedelay", 200, "Additional period delay between updating rounds of the game, in milliseconds. Does not take into account processing time.")
-	flag.StringVar(&params.topology, "topology", "BORDERED", "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE. ")
+	flag.StringVar(&params.topology, "topology", "BORDERED", "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE.")
 	flag.Parse()
 
 	if isValidTopology(params.topology) {
@@ -54,4 +54,37 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("Hello World", params)
+	lattice := ConstructLattice(LatticeParams{
+		gridSize:   params.gridSize,
+		aliveRatio: params.aliveRatio,
+		topology:   params.topology,
+	})
+	latticeHandlers := getLatticeHandlers()
+	defer lattice.cleanup()
+
+	for i := uint(0); i < params.iterations; i++ {
+		isChanged, err := SingleIteration(lattice)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if !isChanged {
+			break
+		}
+		for _, fn := range latticeHandlers {
+			err := fn(lattice)
+			if err != nil {
+				fmt.Println(err)
+			}
+			return
+		}
+	}
+}
+
+func emptyHandler(l *Lattice) error {
+	return nil
+}
+
+func getLatticeHandlers() []func(*Lattice) error {
+	return []func(*Lattice) error{emptyHandler}
 }
