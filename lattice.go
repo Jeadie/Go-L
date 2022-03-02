@@ -1,10 +1,22 @@
 package main
 
-type Lattice struct {
+
+// Node can be used in Lattice method signatures
+type Node any
+type Lattice[T Node] struct {
+	grid [][] T
 }
 
-func (l *Lattice) cleanup() {
+func (l *Lattice[Node]) Cleanup() {
 
+}
+
+func (l *Lattice[Node]) GetValue(x int, y int) Node {
+	return l.grid[x][y]
+};
+
+func (l *Lattice[Node]) GetValuesAround(x int, y int, w int) [][]Node {
+	return l.grid[x-w:x+w][y-w:y+w]
 }
 
 type LatticeParams struct {
@@ -13,6 +25,8 @@ type LatticeParams struct {
 	topology   string
 }
 
-func ConstructLattice(params LatticeParams) *Lattice {
-	return &Lattice{}
+func ConstructLattice[S Node](params LatticeParams) *Lattice[S] {
+	return &Lattice[S]{
+		grid: [][]S{},
+	}
 }

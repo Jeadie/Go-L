@@ -54,14 +54,14 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("Hello World", params)
-	lattice := ConstructLattice(LatticeParams{
+	lattice := ConstructLattice[uint](LatticeParams{
 		gridSize:   params.gridSize,
 		aliveRatio: params.aliveRatio,
 		topology:   params.topology,
 	})
 	latticeHandlers := getLatticeHandlers()
-	o := Orchestrator{}
-	defer lattice.cleanup()
+	o := Orchestrator[uint]{}
+	//lattice.C
 
 	for i := uint(0); i < params.iterations; i++ {
 		isChanged, err := o.SingleIteration(lattice)
@@ -82,10 +82,10 @@ func main() {
 	}
 }
 
-func emptyHandler(l *Lattice) error {
+func emptyHandler(l *Lattice[uint]) error {
 	return nil
 }
 
-func getLatticeHandlers() []func(*Lattice) error {
-	return []func(*Lattice) error{emptyHandler}
+func getLatticeHandlers() []func(*Lattice[uint]) error {
+	return []func(*Lattice[uint]) error{emptyHandler}
 }
