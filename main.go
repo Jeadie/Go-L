@@ -9,11 +9,12 @@ import (
 const (
 	Bordered        string = "BORDERED"
 	Torus                  = "TORUS"
+	Sphere				   = "SPHERE"
 	KleinBottle            = "KLEIN_BOTTLE"
 	ProjectivePlane        = "PROJECTIVE_PLANE"
 )
 
-var ALLOWED_TOPOLOGIES = []string{Bordered, Torus, KleinBottle, ProjectivePlane}
+var ALLOWED_TOPOLOGIES = []string{Bordered, Torus, KleinBottle, ProjectivePlane, Sphere}
 
 func isValidTopology(x string) bool {
 	for _, t := range ALLOWED_TOPOLOGIES {
@@ -39,7 +40,7 @@ func parseArguments() (*InputParameters, error) {
 	flag.UintVar(&params.gridSize, "gridsize", 20, "Length of square grid to define game on.")
 	flag.Float64Var(&params.aliveRatio, "aliveratio", 0.8, "The fraction of squares that start as alive, assigned at random. Domain: [0.0, 1.0].")
 	flag.UintVar(&params.updateDelay, "updatedelay", 200, "Additional period delay between updating rounds of the game, in milliseconds. Does not take into account processing time.")
-	flag.StringVar(&params.topology, "topology", "BORDERED", "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE.")
+	flag.StringVar(&params.topology, "topology", DefaultTopology, "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE, SPHERE.")
 	flag.Parse()
 
 	if isValidTopology(params.topology) {
@@ -52,6 +53,7 @@ func main() {
 	params, err := parseArguments()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	fmt.Println("Hello World", params)
 	lattice := ConstructLattice[uint](LatticeParams{
@@ -61,7 +63,7 @@ func main() {
 	})
 	latticeHandlers := getLatticeHandlers()
 	o := Orchestrator[uint]{}
-	//lattice.C
+	defer lattice.Cleanup()
 
 	for i := uint(0); i < params.iterations; i++ {
 		isChanged, err := o.SingleIteration(lattice)
@@ -73,11 +75,9 @@ func main() {
 			break
 		}
 		for _, fn := range latticeHandlers {
-			err := fn(lattice)
-			if err != nil {
+			if err := fn(lattice); err != nil {
 				fmt.Println(err)
 			}
-			return
 		}
 	}
 }
