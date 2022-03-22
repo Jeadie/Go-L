@@ -56,7 +56,7 @@ func main() {
 		return
 	}
 	fmt.Println("Hello World", params)
-	lattice := ConstructLattice[uint](LatticeParams{
+	lattice := ConstructUintLattice(LatticeParams{
 		gridSize:   params.gridSize,
 		aliveRatio: params.aliveRatio,
 		topology:   params.topology,
