@@ -7,9 +7,13 @@ type BaseOrchestrator[T Node] interface {
 }
 
 type Orchestrator[T Node] struct {
+
 }
 
 func (o Orchestrator[Node]) SingleIteration(l *Lattice[Node]) (bool, error) {
 	fmt.Println("Running single iteration...")
-	return true, nil
+	readG:=  make([]Node, len(l.grid))
+	copied := copy(readG, l.grid)
+
+	return copied > 0, nil
 }

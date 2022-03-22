@@ -8,8 +8,9 @@ import (
 // Node can be used in Lattice method signatures
 type Node any
 type Lattice[T Node] struct {
-	grid [][] T
+	grid [] T
 	topology string
+	n uint
 }
 
 func (l *Lattice[Node]) Cleanup() {
@@ -18,8 +19,13 @@ func (l *Lattice[Node]) Cleanup() {
 
 func (l *Lattice[Node]) GetValue(x int, y int) Node {
 	nx, ny := TranslateVertex(x, y, 0,0, len(l.grid), l.topology)
-	return l.grid[nx][ny]
+	return l.grid[(nx * int(l.n)) + ny]
 };
+
+func (l *Lattice[Node]) SetValue(x int, y int, v Node)  {
+	nx, ny := TranslateVertex(x, y, 0, 0, len(l.grid), l.topology)
+	l.grid[(nx*int(l.n))+ny] = v
+}
 
 // GetValuesAround returns all values around a coordinate within an l-1 distance of w.
 func (l *Lattice[Node]) GetValuesAround(x int, y int, w int) [][]Node {
@@ -41,14 +47,14 @@ type LatticeParams struct {
 }
 
 func ConstructUintLattice(params LatticeParams) *Lattice[uint] {
-	// TODO: construct lattic according to params
 	return &Lattice[uint]{
 		grid: ConstructUintGrid(params.gridSize, params.aliveRatio),
 		topology: params.topology,
+		n: params.gridSize,
 	}
 }
 
-func ConstructUintGrid(n uint, binaryProb float64) [][]uint {
+func ConstructUintGrid(n uint, binaryProb float64) []uint {
 	// Construct chan of 1/0s from decomposing uint64s.
 	u := make(chan uint)
 	go func(out chan uint, size uint) {
@@ -57,12 +63,9 @@ func ConstructUintGrid(n uint, binaryProb float64) [][]uint {
 		}
 	}(u, n*n)
 
-	rows := make([][]uint, n)
-	for i := 0; i < int(n); i++ {
-		rows[i] = make([]uint, n)
-		for j := 0; j < int(n); j++ {
-			rows[i][j] = <- u
-		}
+	rows := make([]uint, n*n)
+	for i := 0; i < int(n*n); i++ {
+		rows[i] = <- u
 	}
 	return rows
 }
