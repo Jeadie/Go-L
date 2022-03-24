@@ -66,7 +66,7 @@ func main() {
 	defer lattice.Cleanup()
 
 	for i := uint(0); i < params.iterations; i++ {
-		isChanged, err := o.SingleIteration(lattice)
+		isChanged, err := o.SingleIteration(lattice, CalculateGOLValue)
 		if err != nil {
 			fmt.Println(err)
 			return
