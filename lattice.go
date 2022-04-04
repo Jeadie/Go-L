@@ -1,38 +1,58 @@
 package main
 
 import (
+	"constraints"
 	"fmt"
+	"math"
 	"math/rand"
+	"strings"
+	"time"
 )
 
-// Node can be used in Lattice method signatures
-type Node any
+// T can be used in Lattice method signatures
+type Node constraints.Ordered
+
 type Lattice[T Node] struct {
 	grid [] T
 	topology string
 	n uint
+	null T
+	formatter func(x T) string
 }
 
-func (l *Lattice[Node]) Cleanup() {
+func (l *Lattice[T]) Cleanup() {
 	fmt.Println("cleaning up Lattice...")
 }
 
-func (l *Lattice[Node]) GetValue(x int, y int) Node {
+func (l *Lattice[T]) GetValue(x int, y int) T {
 	nx, ny := TranslateVertex(x, y, 0,0, len(l.grid), l.topology)
+	if nx == -1 || ny == -1 { return l.null }
 	return l.grid[(nx * int(l.n)) + ny]
 };
 
-func (l *Lattice[Node]) SetValue(x int, y int, v Node)  {
+func (l *Lattice[T]) SetValue(x int, y int, v T)  {
 	nx, ny := TranslateVertex(x, y, 0, 0, len(l.grid), l.topology)
 	l.grid[(nx*int(l.n))+ny] = v
 }
 
+func (l *Lattice[T]) Print() {
+	for i := 0; i <int(l.n); i++ {
+		fmt.Printf("\033[%d;3H", i+2)
+		line :=  make([]string, l.n)
+		for j := 0; j < int(l.n); j++ {
+			line[j] = l.formatter(l.GetValue(j, i))
+		}
+		fmt.Println(strings.Join(line, " "))
+	}
+	time.Sleep(time.Millisecond * 400)
+}
+
 // GetValuesAround returns all values around a coordinate within an l-1 distance of w.
-func (l *Lattice[Node]) GetValuesAround(x int, y int, w int) [][]Node {
-	rows := make([][]Node, 2*w+1)
+func (l *Lattice[T]) GetValuesAround(x int, y int, w int) [][]T {
+	rows := make([][]T, 2*w+1)
 
 	for i := -w; i < w; i++ {
-		rows[i+w] = make([]Node, 2*w + 1)
+		rows[i+w] = make([]T, 2*w + 1)
 		for j := -w; j < w; j++ {
 			rows[w+i][w+j] = l.GetValue(x+i, y+j)
 		}
@@ -51,6 +71,14 @@ func ConstructUintLattice(params LatticeParams) *Lattice[uint] {
 		grid: ConstructUintGrid(params.gridSize, params.aliveRatio),
 		topology: params.topology,
 		n: params.gridSize,
+		null: uint(math.MaxUint),
+		formatter: func(t uint) string {
+			if t == 0 {
+				return "-"
+			} else {
+				return "+"
+			}
+		},
 	}
 }
 
@@ -59,7 +87,7 @@ func ConstructUintGrid(n uint, binaryProb float64) []uint {
 	u := make(chan uint)
 	go func(out chan uint, size uint) {
 		for i := 0; i < int(size); i++ {
-			if rand.Float64() > binaryProb { u <- 1 } else { u <- 0 }
+			if rand.Float64() < binaryProb { u <- 1 } else { u <- 0 }
 		}
 	}(u, n*n)
 

@@ -1,26 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"constraints"
 )
 
 type IntPair = [2]int
 
-type BaseOrchestrator[T Node] interface {
-	SingleIteration(l *Lattice[Node]) (bool, error)
+type BaseOrchestrator[T constraints.Ordered] interface {
+	SingleIteration(l *Lattice[T]) (bool, error)
 }
 
-type Orchestrator[T Node] struct {
+type Orchestrator[T constraints.Ordered] struct {
 
 }
 
-func (o Orchestrator[Node]) SingleIteration(l *Lattice[Node], updateRule func([][]Node) Node) (bool, error) {
-	fmt.Println("Running single iteration...")
-	readG :=  make([]Node, len(l.grid))
-	copied := copy(readG, l.grid)
+func (o Orchestrator[T]) SingleIteration(l *Lattice[T], updateRule func([][]T) T) (bool, error) {
+	readG :=  make([]T, len(l.grid))
+	copy(readG, l.grid)
 
 	// Use for read only, to allow parallel write to original lattice.
-	readL := &Lattice[Node]{
+	readL := &Lattice[T]{
 		grid:     readG,
 		topology: l.topology,
 		n:        l.n,
@@ -37,15 +36,18 @@ func (o Orchestrator[Node]) SingleIteration(l *Lattice[Node], updateRule func([]
 		}
 	}(x)
 
+	isUpdated := false
 	// Update write Lattice using read Lattice.
-	go func(write *Lattice[Node], read *Lattice[Node], ins chan IntPair) {
+	go func(write *Lattice[T], read *Lattice[T], ins chan IntPair, isUpdated *bool) {
 		for i := range ins {
 			x, y := i[0], i[1]
 			box := read.GetValuesAround(x, y, 1)
-			write.SetValue(x, y, updateRule(box))
+			newV := updateRule(box)
+			write.SetValue(x, y, newV)
+			if newV != box[1][1] { *isUpdated = true }
 		}
-	}(l, readL, x )
+	}(l, readL, x, &isUpdated)
 
-
-	return copied > 0, nil
+	l.Print()
+	return isUpdated, nil
 }

@@ -13,15 +13,14 @@ func CalculateGOLValue(box [][]uint) uint {
 
 func countOnesAround(box [][]uint, x, y uint) uint {
 	c := 0
-
-	// row b can be -1, dont use in increment.
+	// row b can be math.MaxUint, dont use in increment.
 	for b := range box {
 		if b == 1 {
 			c += 1
 		}
 	}
 
-	// remove centre value (which cannot be -1)
+	// remove centre value (which cannot be math.MaxUint)
 	if box[x][y] == 1 {
 		c -= 1
 	}
