@@ -12,19 +12,24 @@ func CalculateGOLValue(box [][]uint) uint {
 }
 
 func countOnesAround(box [][]uint, x, y uint) uint {
-	c := 0
-	// row b can be math.MaxUint, dont use in increment.
-	for b := range box {
-		if b == 1 {
-			c += 1
-		}
+	co := uint(0)
+
+	a, b, c, d := box[x-1][y-1], box[x-1][y+1], box[x+1][y-1], box[x+1][y+1]
+
+	if a < 2 {
+		co += a
+	}
+	if b < 2 {
+		co += b
+	}
+	if c < 2 {
+		co += c
+	}
+	if d < 2 {
+		co += d
 	}
 
-	// remove centre value (which cannot be math.MaxUint)
-	if box[x][y] == 1 {
-		c -= 1
-	}
-	return uint(c)
+	return co
 }
 
 func getMidpoint(box [][]uint) (uint, uint) {

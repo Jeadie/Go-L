@@ -25,7 +25,7 @@ func (l *Lattice[T]) Cleanup() {
 }
 
 func (l *Lattice[T]) GetValue(x int, y int) T {
-	nx, ny := TranslateVertex(x, y, 0,0, len(l.grid), l.topology)
+	nx, ny := TranslateVertex(x, y, 0,0, int(l.n), l.topology)
 	if nx == -1 || ny == -1 { return l.null }
 	return l.grid[(nx * int(l.n)) + ny]
 };
@@ -37,7 +37,7 @@ func (l *Lattice[T]) SetValue(x int, y int, v T)  {
 
 func (l *Lattice[T]) Print() {
 	for i := 0; i <int(l.n); i++ {
-		fmt.Printf("\033[%d;3H", i+2)
+		//fmt.Printf("\033[%d;3H", i+2)
 		line :=  make([]string, l.n)
 		for j := 0; j < int(l.n); j++ {
 			line[j] = l.formatter(l.GetValue(j, i))
@@ -47,14 +47,15 @@ func (l *Lattice[T]) Print() {
 	time.Sleep(time.Millisecond * 400)
 }
 
-// GetValuesAround returns all values around a coordinate within an l-1 distance of w.
+// GetValuesAround returns all values around a coordinate within an L1 distance of w.
 func (l *Lattice[T]) GetValuesAround(x int, y int, w int) [][]T {
 	rows := make([][]T, 2*w+1)
 
-	for i := -w; i < w; i++ {
-		rows[i+w] = make([]T, 2*w + 1)
-		for j := -w; j < w; j++ {
-			rows[w+i][w+j] = l.GetValue(x+i, y+j)
+	for i := 0; i < 2*w + 1; i++ {
+		rows[i] = make([]T, 2*w + 1)
+		for j := 0; j < 2*w+1; j++ {
+
+			rows[i][j] = l.GetValue(x+i-w, y+j-w)
 		}
 	}
 	return rows

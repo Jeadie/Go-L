@@ -43,6 +43,7 @@ func (o Orchestrator[T]) SingleIteration(l *Lattice[T], updateRule func([][]T) T
 			x, y := i[0], i[1]
 			box := read.GetValuesAround(x, y, 1)
 			newV := updateRule(box)
+			//fmt.Println(x, y, l.GetValue(x, y), newV, box)
 			write.SetValue(x, y, newV)
 			if newV != box[1][1] { *isUpdated = true }
 		}
