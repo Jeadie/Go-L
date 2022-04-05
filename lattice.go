@@ -20,9 +20,7 @@ type Lattice[T Node] struct {
 	formatter func(x T) string
 }
 
-func (l *Lattice[T]) Cleanup() {
-	fmt.Println("cleaning up Lattice...")
-}
+func (l *Lattice[T]) Cleanup() {}
 
 func (l *Lattice[T]) GetValue(x int, y int) T {
 	nx, ny := TranslateVertex(x, y, 0,0, int(l.n), l.topology)
@@ -37,7 +35,7 @@ func (l *Lattice[T]) SetValue(x int, y int, v T)  {
 
 func (l *Lattice[T]) Print() {
 	for i := 0; i <int(l.n); i++ {
-		//fmt.Printf("\033[%d;3H", i+2)
+		fmt.Printf("\033[%d;3H", i+2)
 		line :=  make([]string, l.n)
 		for j := 0; j < int(l.n); j++ {
 			line[j] = l.formatter(l.GetValue(j, i))

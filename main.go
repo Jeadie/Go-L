@@ -71,21 +71,18 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		if !isChanged {
-			break
-		}
+		if !isChanged {break}
 		for _, fn := range latticeHandlers {
-			if err := fn(lattice); err != nil {
-				fmt.Println(err)
-			}
+			if err := fn(lattice); err != nil {fmt.Println(err)}
 		}
 	}
 }
 
-func emptyHandler(l *Lattice[uint]) error {
+func printHandler(l *Lattice[uint]) error {
+	l.Print()
 	return nil
 }
 
 func getLatticeHandlers() []func(*Lattice[uint]) error {
-	return []func(*Lattice[uint]) error{emptyHandler}
+	return []func(*Lattice[uint]) error{printHandler}
 }
