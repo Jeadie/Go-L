@@ -33,6 +33,8 @@ type InputParameters struct {
 	topology    string
 }
 
+type LatticeProcessor func(*Lattice[uint]) error
+
 func parseArguments() (*InputParameters, error) {
 	params := InputParameters{}
 
@@ -50,39 +52,44 @@ func parseArguments() (*InputParameters, error) {
 }
 
 func main() {
+	// Parse cli args
 	params, err := parseArguments()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	lattice := ConstructUintLattice(LatticeParams{
-		gridSize:   params.gridSize,
-		aliveRatio: params.aliveRatio,
-		topology:   params.topology,
-	})
-	latticeHandlers := getLatticeHandlers()
+
+	// Setup Lattice
+	l := ConstructUintLattice(
+		LatticeParams{
+			gridSize:   params.gridSize,
+			aliveRatio: params.aliveRatio,
+			topology:   params.topology,
+		},
+		CalculateGOLValue,
+	)
+	defer l.Cleanup()
+
+	processors := []LatticeProcessor{func(l *Lattice[uint]) error { l.Print(); return nil }}
 	o := Orchestrator[uint]{}
-	defer lattice.Cleanup()
 
 	fmt.Print("\033[H\033[2J")
 	for i := uint(0); i < params.iterations; i++ {
-		isChanged, err := o.SingleIteration(lattice, CalculateGOLValue)
+		isChanged, err := o.SingleIteration(l)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		if !isChanged {break}
-		for _, fn := range latticeHandlers {
-			if err := fn(lattice); err != nil {fmt.Println(err)}
+		if !isChanged {
+			break
 		}
+		runProcessors(l, processors)
 	}
 }
 
-func printHandler(l *Lattice[uint]) error {
-	l.Print()
-	return nil
-}
-
-func getLatticeHandlers() []func(*Lattice[uint]) error {
-	return []func(*Lattice[uint]) error{printHandler}
+// Run a set of read-only processes on a Lattice.
+func runProcessors(l *Lattice[uint], processors []LatticeProcessor) {
+	for _, fn := range processors {
+		if err := fn(l); err != nil {fmt.Println(err)}
+	}
 }
