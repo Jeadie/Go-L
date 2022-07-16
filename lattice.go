@@ -2,48 +2,35 @@ package main
 
 import (
 	"constraints"
-	"fmt"
 	"math"
 	"math/rand"
-	"strings"
-	"time"
 )
 
-// T can be used in Lattice method signatures
+// Node can be used in Lattice method signatures
 type Node constraints.Ordered
+type IntPair = [2]int
+
 
 type Lattice[T Node] struct {
-	grid [] T
-	topology string
-	n uint
-	null T
-	formatter func(x T) string
+	grid       []T
+	topology   string
+	n 		   uint
+	null       T
+	formatter  func(x T) string
 	updateRule func([][]T) T
 }
 
-func (l *Lattice[T]) Cleanup() {}
-
+// GetValue on lattice at coordinate (x, y)
 func (l *Lattice[T]) GetValue(x int, y int) T {
 	nx, ny := TranslateVertex(x, y, 0,0, int(l.n), l.topology)
 	if nx == -1 || ny == -1 { return l.null }
 	return l.grid[(nx * int(l.n)) + ny]
 }
 
+// SetValue on lattice at coordinate (x, y) to v
 func (l *Lattice[T]) SetValue(x int, y int, v T)  {
 	nx, ny := TranslateVertex(x, y, 0, 0, len(l.grid), l.topology)
 	l.grid[(nx*int(l.n))+ny] = v
-}
-
-func (l *Lattice[T]) Print() {
-	for i := 0; i <int(l.n); i++ {
-		fmt.Printf("\033[%d;3H", i+2)
-		line :=  make([]string, l.n)
-		for j := 0; j < int(l.n); j++ {
-			line[j] = l.formatter(l.GetValue(j, i))
-		}
-		fmt.Println(strings.Join(line, " "))
-	}
-	time.Sleep(time.Millisecond * 400)
 }
 
 // GetValuesAround returns all values around a coordinate within an L1 distance of w.
@@ -60,7 +47,8 @@ func (l *Lattice[T]) GetValuesAround(x int, y int, w int) [][]T {
 	return rows
 }
 
-func (l *Lattice[T]) Duplicate() *Lattice[T] {
+// Copy a Lattice struct, and all its references, to a new instance (i.e. deep copy).
+func (l *Lattice[T]) Copy() *Lattice[T] {
 	readG :=  make([]T, len(l.grid))
 	copy(readG, l.grid)
 	return &Lattice[T]{
@@ -71,6 +59,7 @@ func (l *Lattice[T]) Duplicate() *Lattice[T] {
 	}
 }
 
+// GetLatticeCoordinates into a channel of all coordinates on the lattice.
 func (l *Lattice[T]) GetLatticeCoordinates() chan IntPair {
 	out := make(chan IntPair)
 	go func(out chan IntPair) {
@@ -84,30 +73,34 @@ func (l *Lattice[T]) GetLatticeCoordinates() chan IntPair {
 	return out
 }
 
-
-func (l *Lattice[T]) UpdateLattice(readOnlyL *Lattice[T], pairs chan IntPair) bool {
-	isUpdated := false
-	for i := range pairs {
-		updated := l.UpdatePair(i, readOnlyL)
-		if updated { isUpdated = true }
-	}
-	return isUpdated
-}
-
+// UpdatePair value within a lattice at a given co-ordinate. if `readL` is nil,
+// will read from referenced Lattice. This allows for parallel update of
+// lattice without conflict.
 func (l *Lattice[T]) UpdatePair(i IntPair, readL *Lattice[T]) bool {
 	x, y := i[0], i[1]
-	box := readL.GetValuesAround(x, y, 1)
+	var box [][]T
+	if readL != nil {
+		box = readL.GetValuesAround(x, y, 1)
+	} else {
+		box = l.GetValuesAround(x, y, 1)
+	}
+
 	newV := l.updateRule(box)
 
 	l.SetValue(x, y, newV)
 	return newV != box[1][1]
 }
 
+// SingleIteration of applying an update rule to a lattice. Returns true if any
+// coordinate value in the lattice updated in the iteration.
 func (l *Lattice[T]) SingleIteration() bool {
-	return l.UpdateLattice(
-		l.Duplicate(),
-		l.GetLatticeCoordinates(),
-	)
+	isUpdated := false
+	readL := l.Copy()
+	for i := range l.GetLatticeCoordinates() {
+		updated := l.UpdatePair(i, readL)
+		if updated { isUpdated = true }
+	}
+	return isUpdated
 }
 
 

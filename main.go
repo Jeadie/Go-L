@@ -4,6 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"strings"
+	"time"
 )
 
 const (
@@ -68,23 +70,27 @@ func main() {
 		},
 		CalculateGOLValue,
 	)
-	defer l.Cleanup()
 
-	processors := []LatticeProcessor{func(l *Lattice[uint]) error { l.Print(); return nil }}
-	o := Orchestrator[uint]{}
+	processors := []LatticeProcessor{Print}
 
 	fmt.Print("\033[H\033[2J")
 	for i := uint(0); i < params.iterations; i++ {
-		isChanged, err := o.SingleIteration(l)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		if !isChanged {
-			break
-		}
+		if !l.SingleIteration() {break}
 		runProcessors(l, processors)
 	}
+}
+
+func Print(l *Lattice[uint]) error {
+	for i := 0; i <int(l.n); i++ {
+		fmt.Printf("\033[%d;3H", i+2)
+		line :=  make([]string, l.n)
+		for j := 0; j < int(l.n); j++ {
+			line[j] = l.formatter(l.GetValue(j, i))
+		}
+		fmt.Println(strings.Join(line, " "))
+	}
+	time.Sleep(time.Millisecond * 400)
+	return nil
 }
 
 // Run a set of read-only processes on a Lattice.
