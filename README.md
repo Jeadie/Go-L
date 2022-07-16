@@ -76,4 +76,4 @@ $$
 }
 $$
 
-For update rules that consider 2nd degree neighbours (i.e. $(6,2)$), the mapping gets a bit more complicated. 
+For update rules that consider 2nd degree neighbours (i.e. $(6,2)$ ), the mapping gets a bit more complicated. 
