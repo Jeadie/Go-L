@@ -35,19 +35,31 @@ Usage of Go-L:
 
 ### Border Topologies
 In redefining how the border conditions work, we can simulate GOL as if it was played on a variety of manifolds. This is most clearly seen when looking at the fundamental polygons derived from a square (or parallelogram). When considering the neighbours of a cell on the border of the lattice, a fundamental polygon helps show where the neighbouring values should be.
+| Sphere | Real Projective Plane | Klein Bottle | Torus | 
+| -- | -- | -- | -- | 
+| ![Sphere](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/SphereAsSquare.svg/240px-SphereAsSquare.svg.png)| ![Real Projective Plane](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/ProjectivePlaneAsSquare.svg/240px-ProjectivePlaneAsSquare.svg.png)| ![Klein Bottle](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/KleinBottleAsSquare.svg/240px-KleinBottleAsSquare.svg.png)| ![Torus](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/TorusAsSquare.svg/240px-TorusAsSquare.svg.png) |
 
-![Sphere](https://en.wikipedia.org/wiki/File:SphereAsSquare.svg)
-![Real Projective Plane](https://en.wikipedia.org/wiki/File:ProjectivePlaneAsSquare.svg)
-![Klein Bottle](https://en.wikipedia.org/wiki/File:KleinBottleAsSquare.svg)
-![Torus](https://en.wikipedia.org/wiki/File:TorusAsSquare.svg)
 
-Consider a 5x5 lattice, coordinates indexed in [0,4] x [0,4]. For a standard coordinate, say (2,2), its neighbours are: {(1,2),(3,2),(2,1),(2,3)}. These are all within standard bounds. Now consider the point (4,2) with neighbours: {(3,2),(5,2),(4,1),(4,3)}. What value should we use for (5,2)? The topology dictates how lattice-border neighbours get selected. For a bordered topology, there is nothing outside of lattice, therefore index it the null value (or 0 in GOL rules). For a sphere, the (5,2) becomes (2,0) gives its equivalence relation. 
+Consider a square lattice of size 5, coordinates indexed in $[0,4] \times [0,4]$. For a standard coordinate, say $(2,2)$, its neighbours are: ${(1,2),(3,2),(2,1),(2,3)}$. These are all within standard bounds. Now consider the point $(4,2)$ with neighbours: ${(3,2),(5,2),(4,1),(4,3)}$. What value should we use for $(5,2)$? The topology dictates how lattice-border neighbours get selected. For a bordered topology, there is nothing outside of lattice, therefore index it the null value (or 0 in GOL rules). For a sphere, the $(5,2)$ becomes $(2,0)$ given its equivalence relation (on an $n$ square lattice): 
 
-Current: 
-- Bordered
-- Sphere
-- Torus
+$$ 
+(x, 0) \backsim (n, n-x), \quad x\in [0, n] \\
+(x, n) \backsim (0, n-x), \quad x\in [0, n]
+$$
+Or for a torus
+$$ 
+(x, 0) \backsim (x, n), \quad x\in [0, n] \\
+(0, y) \backsim (n, y), \quad y\in [0, n]
+$$
+or a real projective plane
+$$ 
+(0, y) \backsim (n, n-y), \quad y\in [0, n] \\
+(x, 0) \backsim (n-x, n), \quad x\in [0, n]
+$$
+and lastly a klein bottle
+$$ 
+(0, y) \backsim (n, y), \quad y\in [0, n] \\
+(x, 0) \backsim (n-x, n), \quad x\in [0, n]
+$$
 
-WIP: 
-- KleinBottle
-- ProjectivePlane
+For update rules that consider 2nd degree neighbours (i.e. $(6,2)$), the mapping gets a bit more complicated. 
