@@ -13,7 +13,7 @@ type IntPair = [2]int
 
 type Lattice[T Node] struct {
 	grid       []T
-	topology   string
+	topologyFn TopologyTransformation
 	n 		   uint
 	null       T
 	formatter  func(x T) string
@@ -22,14 +22,14 @@ type Lattice[T Node] struct {
 
 // GetValue on lattice at coordinate (x, y)
 func (l *Lattice[T]) GetValue(x int, y int) T {
-	nx, ny := TranslateVertex(x, y, 0,0, int(l.n), l.topology)
+	nx, ny := l.topologyFn(x, y, 0,0, int(l.n))
 	if nx == -1 || ny == -1 { return l.null }
 	return l.grid[(nx * int(l.n)) + ny]
 }
 
 // SetValue on lattice at coordinate (x, y) to v
 func (l *Lattice[T]) SetValue(x int, y int, v T)  {
-	nx, ny := TranslateVertex(x, y, 0, 0, len(l.grid), l.topology)
+	nx, ny := l.topologyFn(x, y, 0,0, int(l.n))
 	l.grid[(nx*int(l.n))+ny] = v
 }
 
@@ -52,9 +52,9 @@ func (l *Lattice[T]) Copy() *Lattice[T] {
 	readG :=  make([]T, len(l.grid))
 	copy(readG, l.grid)
 	return &Lattice[T]{
-		grid:     readG,
-		topology: l.topology,
-		n:        l.n,
+		grid:       readG,
+		topologyFn: l.topologyFn,
+		n:          l.n,
 		updateRule: l.updateRule,
 	}
 }
@@ -114,7 +114,7 @@ type LatticeParams struct {
 func ConstructUintLattice(params LatticeParams, updateRule func([][]uint) uint) *Lattice[uint] {
 	return &Lattice[uint]{
 		grid: ConstructUintGrid(params.gridSize, params.aliveRatio),
-		topology: params.topology,
+		topologyFn: GetTransformation(params.topology),
 		n: params.gridSize,
 		null: uint(math.MaxUint),
 		formatter: func(t uint) string {

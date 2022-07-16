@@ -8,25 +8,6 @@ import (
 	"time"
 )
 
-const (
-	Bordered        string = "BORDERED"
-	Torus                  = "TORUS"
-	Sphere				   = "SPHERE"
-	KleinBottle            = "KLEIN_BOTTLE"
-	ProjectivePlane        = "PROJECTIVE_PLANE"
-)
-
-var ALLOWED_TOPOLOGIES = []string{Bordered, Torus, KleinBottle, ProjectivePlane, Sphere}
-
-func isValidTopology(x string) bool {
-	for _, t := range ALLOWED_TOPOLOGIES {
-		if t == x {
-			return true
-		}
-	}
-	return false
-}
-
 type InputParameters struct {
 	iterations  uint
 	gridSize    uint
