@@ -43,23 +43,37 @@ In redefining how the border conditions work, we can simulate GOL as if it was p
 Consider a square lattice of size 5, coordinates indexed in $[0,4] \times [0,4]$. For a standard coordinate, say $(2,2)$, its neighbours are: ${(1,2),(3,2),(2,1),(2,3)}$. These are all within standard bounds. Now consider the point $(4,2)$ with neighbours: ${(3,2),(5,2),(4,1),(4,3)}$. What value should we use for $(5,2)$? The topology dictates how lattice-border neighbours get selected. For a bordered topology, there is nothing outside of lattice, therefore index it the null value (or 0 in GOL rules). For a sphere, the $(5,2)$ becomes $(2,0)$ given its equivalence relation (on an $n$ square lattice): 
 
 $$ 
-(x, 0) \backsim (n, n-x), \quad x\in [0, n] \\
-(x, n) \backsim (0, n-x), \quad x\in [0, n]
+\displaylines{
+ (x, 0) \backsim (n, n-x), \quad x\in [0, n] \\
+ (x, n) \backsim (0, n-x), \quad x\in [0, n]
+ }
 $$
+
 Or for a torus
+
 $$ 
-(x, 0) \backsim (x, n), \quad x\in [0, n] \\
-(0, y) \backsim (n, y), \quad y\in [0, n]
+\displaylines{
+ (x, 0) \backsim (x, n), \quad x\in [0, n] \\
+ (0, y) \backsim (n, y), \quad y\in [0, n]
+}
 $$
+
 or a real projective plane
+
 $$ 
-(0, y) \backsim (n, n-y), \quad y\in [0, n] \\
-(x, 0) \backsim (n-x, n), \quad x\in [0, n]
+\displaylines{
+ (0, y) \backsim (n, n-y), \quad y\in [0, n] \\
+ (x, 0) \backsim (n-x, n), \quad x\in [0, n]
+}
 $$
+
 and lastly a klein bottle
+
 $$ 
-(0, y) \backsim (n, y), \quad y\in [0, n] \\
-(x, 0) \backsim (n-x, n), \quad x\in [0, n]
+\displaylines{
+ (0, y) \backsim (n, y), \quad y\in [0, n] \\
+ (x, 0) \backsim (n-x, n), \quad x\in [0, n]
+}
 $$
 
 For update rules that consider 2nd degree neighbours (i.e. $(6,2)$), the mapping gets a bit more complicated. 
