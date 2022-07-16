@@ -61,12 +61,12 @@ func TestTopologyTransformation(t *testing.T) {
 	},{
 		topology: Sphere,
 		tests:    []TopologyTestCase{
-			{ x: 0, y: 0, dx: -1, dy: 0,  n: 5, expectedX: 4, expectedY: 4},
-			{ x: 0, y: 0, dx: 0,  dy: -1, n: 5, expectedX: 4, expectedY: 4},
+			{ x: 0, y: 0, dx: -1, dy: 0,  n: 5, expectedX: 1, expectedY: 0},
+			{ x: 0, y: 0, dx: 0,  dy: -1, n: 5, expectedX: 0, expectedY: 1},
 			{ x: 0, y: 0, dx: -1, dy: -1, n: 5, expectedX: 4, expectedY: 4},
 
-			{ x: 3, y: 4, dx: 0, dy: 1, n: 5, expectedX: 0, expectedY: 1},
-			{ x: 4, y: 3, dx: 1, dy: 0, n: 5, expectedX: 1, expectedY: 0},
+			{ x: 3, y: 4, dx: 0, dy: 1, n: 5, expectedX: 0, expectedY: 3},
+			{ x: 4, y: 3, dx: 1, dy: 0, n: 5, expectedX: 3, expectedY: 0},
 			{ x: 4, y: 4, dx: 1, dy: 1, n: 5, expectedX: 0, expectedY: 0},
 
 			{ x: 0, y: 0, dx: 0,  dy: 1,  n: 5, expectedX: 0,  expectedY: 1},
