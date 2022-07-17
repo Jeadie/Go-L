@@ -1,4 +1,4 @@
-package main
+package gol
 
 const (
 	Bordered        string = "BORDERED"
@@ -12,7 +12,7 @@ var ALLOWED_TOPOLOGIES = []string{Bordered, Torus, KleinBottle, ProjectivePlane,
 
 const DefaultTopology = Bordered
 
-// Returns true iff x is an allowed topology.
+// Returns true iff x is an allowed Topology.
 func isValidTopology(x string) bool {
 	for _, t := range ALLOWED_TOPOLOGIES {
 		if t == x {
@@ -25,7 +25,7 @@ func isValidTopology(x string) bool {
 // Describes how co-ordinates get transformed onn the boundary conditions
 type TopologyTransformation func(x, y int, dx, dy int, n int) (int, int)
 
-// GetTransformation returns the transformation function for a given topology.
+// GetTransformation returns the transformation function for a given Topology.
 func GetTransformation(topology string) TopologyTransformation {
 	switch topology {
 	case Bordered:

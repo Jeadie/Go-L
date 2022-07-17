@@ -1,5 +1,6 @@
-package main
+package gol
 
+import "github.com/Jeadie/Go-L"
 
 func CalculateGOLValue(box [][]uint) uint {
 	x, y := getMidpoint(box)
@@ -13,7 +14,7 @@ func CalculateGOLValue(box [][]uint) uint {
 }
 
 // CreateUpdateRule from a 32 bit update rule number. See README.md#2d-implementation for details.
-func CreateUpdateRule(updateRuleNumber uint) UpdateRuleFn {
+func CreateUpdateRule(updateRuleNumber uint) main.UpdateRuleFn {
 	// Only contain states that are alive, but will also map to true
 	// So for alive states: isAlive, found := aliveStates[s] == true, true
 	// So for dead states: isAlive, found := aliveStates[s] == false, false

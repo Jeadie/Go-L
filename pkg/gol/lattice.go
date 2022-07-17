@@ -1,7 +1,8 @@
-package main
+package gol
 
 import (
 	"constraints"
+	"github.com/Jeadie/pkg/Go-L"
 	"math"
 	"math/rand"
 )
@@ -14,7 +15,7 @@ type IntPair = [2]int
 type Lattice[T Node] struct {
 	grid       []T
 	topologyFn TopologyTransformation
-	n 		   uint
+	n          uint
 	null       T
 	formatter  func(x T) string
 	updateRule func([][]T) T
@@ -106,17 +107,17 @@ func (l *Lattice[T]) SingleIteration() bool {
 
 // LatticeParams required to construct a Lattice with type uint (i.e. Lattice[uint]).
 type LatticeParams struct {
-	gridSize   uint
-	aliveRatio float64
-	topology   string
+	GridSize   uint
+	AliveRatio float64
+	Topology   string
 }
 
-func ConstructUintLattice(params LatticeParams, updateRule UpdateRuleFn) *Lattice[uint] {
+func ConstructUintLattice(params LatticeParams, updateRule main.UpdateRuleFn) *Lattice[uint] {
 	return &Lattice[uint]{
-		grid: ConstructUintGrid(params.gridSize, params.aliveRatio),
-		topologyFn: GetTransformation(params.topology),
-		n: params.gridSize,
-		null: uint(math.MaxUint),
+		grid:       ConstructUintGrid(params.GridSize, params.AliveRatio),
+		topologyFn: GetTransformation(params.Topology),
+		n:          params.GridSize,
+		null:       uint(math.MaxUint),
 		formatter: func(t uint) string {
 			if t == 0 {
 				return "-"
