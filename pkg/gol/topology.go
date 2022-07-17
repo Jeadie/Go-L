@@ -13,7 +13,7 @@ var ALLOWED_TOPOLOGIES = []string{Bordered, Torus, KleinBottle, ProjectivePlane,
 const DefaultTopology = Bordered
 
 // Returns true iff x is an allowed Topology.
-func isValidTopology(x string) bool {
+func IsValidTopology(x string) bool {
 	for _, t := range ALLOWED_TOPOLOGIES {
 		if t == x {
 			return true

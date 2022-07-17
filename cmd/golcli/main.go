@@ -20,7 +20,6 @@ type InputParameters struct {
 
 const ConwaysGameOfLifeUpdateRuleNumber = 1994975360
 
-type UpdateRuleFn func([][]uint) uint
 type LatticeProcessor func(*gol.Lattice[uint]) error
 
 func parseArguments() (*InputParameters, error) {
@@ -34,7 +33,7 @@ func parseArguments() (*InputParameters, error) {
 	flag.UintVar(&params.updateFunctionNumber, "updaterule", ConwaysGameOfLifeUpdateRuleNumber, "Specify the number associated with the update rule to use. Default to Conway's Game of Life.")
 	flag.Parse()
 
-	if gol.isValidTopology(params.topology) {
+	if gol.IsValidTopology(params.topology) {
 		return &params, nil
 	}
 	return nil, errors.New(fmt.Sprintf("Invalid topology specified %s. Topology must be one of %s", params.topology, gol.ALLOWED_TOPOLOGIES))
@@ -49,7 +48,7 @@ func main() {
 	}
 
 	// Update rule
-	var updateRule UpdateRuleFn
+	var updateRule gol.UpdateRuleFn
 	if params.updateFunctionNumber == ConwaysGameOfLifeUpdateRuleNumber {
 		updateRule = gol.CalculateGOLValue
 	} else {
@@ -59,9 +58,9 @@ func main() {
 	// Setup Lattice
 	l := gol.ConstructUintLattice(
 		gol.LatticeParams{
-			gridSize:   params.gridSize,
-			aliveRatio: params.aliveRatio,
-			topology:   params.topology,
+			GridSize:   params.gridSize,
+			AliveRatio: params.aliveRatio,
+			Topology:   params.topology,
 		},
 		updateRule,
 	)
@@ -76,11 +75,11 @@ func main() {
 }
 
 func Print(l *gol.Lattice[uint]) error {
-	for i := 0; i <int(l.n); i++ {
+	for i := 0; i <int(l.Size()); i++ {
 		fmt.Printf("\033[%d;3H", i+2)
-		line :=  make([]string, l.n)
-		for j := 0; j < int(l.n); j++ {
-			line[j] = l.formatter(l.GetValue(j, i))
+		line :=  make([]string, l.Size())
+		for j := 0; j < int(l.Size()); j++ {
+			line[j] = l.GetFormattedValueAt(j, i)
 		}
 		fmt.Println(strings.Join(line, " "))
 	}

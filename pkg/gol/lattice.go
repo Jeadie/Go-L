@@ -2,7 +2,6 @@ package gol
 
 import (
 	"constraints"
-	"github.com/Jeadie/pkg/Go-L"
 	"math"
 	"math/rand"
 )
@@ -19,6 +18,15 @@ type Lattice[T Node] struct {
 	null       T
 	formatter  func(x T) string
 	updateRule func([][]T) T
+}
+
+func (l *Lattice[T]) GetFormattedValueAt(x, y int) string {
+	return l.formatter(l.GetValue(x, y))
+}
+
+// Size of the square grid lattice
+func (l *Lattice[T]) Size() uint {
+	return l.n
 }
 
 // GetValue on lattice at coordinate (x, y)
@@ -112,7 +120,7 @@ type LatticeParams struct {
 	Topology   string
 }
 
-func ConstructUintLattice(params LatticeParams, updateRule main.UpdateRuleFn) *Lattice[uint] {
+func ConstructUintLattice(params LatticeParams, updateRule UpdateRuleFn) *Lattice[uint] {
 	return &Lattice[uint]{
 		grid:       ConstructUintGrid(params.GridSize, params.AliveRatio),
 		topologyFn: GetTransformation(params.Topology),
