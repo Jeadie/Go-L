@@ -77,3 +77,25 @@ $$
 $$
 
 For update rules that consider 2nd degree neighbours (i.e. $(6,2)$ ), the mapping gets a bit more complicated. 
+
+
+### More on Game of Life
+A cellular automaton designed by mathematician John Conway showing how complex emergent behaviour can arise from simple
+rules. In his case, at each future timestamp, a cell will be updated, based on its four neighbouring cells: 
+1. A live cell will survive if only 2 or 3 of its neighbours are alive
+2. A dead cell with 3 alive neighbours will become alive
+3. All other cells die. 
+
+### Update Rules
+Conway's Game of Life is but one 2D cellular automata that depends only on its 4 direct neighbours. One can conceive of
+other update rules. If one considers the five relevant cells: left, cell, right, up & down, there are then $2^5=32$ possible states to consider. An update rule can be defined as follows.
+1. Define an ordered set on the 32 possible states $ \{ s_i \}_{i=0}^{32} $ 
+2. Create a 32 digit binary number, $B$, where $B_i = 1$ iff the update rule maps the cell with state $S_i$ to 1.
+3. All update rules can be then indexed from this, $U_B : \{0,1\}^5 \to \{ 0, 1\}$
+
+#### Update Rules: 1D example
+Consider a simple 1D case of: left, cell, right. There are 8 states with a natural indexing: $111, 110, 101, 100, 011, 010, 001, 000$. An example update rule $U_{177}$ updates the cell to 1 in the following cases: 111, 101, 100, 000 (all other cases to 0). With the binary expansion $177 = 10110001b$, this can be expressed simply below: 
+
+| 111 | 110 | 101 | 100 | 011 | 010 | 001 | 000 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 0 | 1 | 1 | 0 | 0 | 0 | 1 |
