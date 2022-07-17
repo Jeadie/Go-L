@@ -52,7 +52,7 @@ func main() {
 	if params.updateFunctionNumber == ConwaysGameOfLifeUpdateRuleNumber {
 		updateRule = CalculateGOLValue
 	} else {
-		CreateUpdateRule(params.updateFunctionNumber)
+		updateRule = CreateUpdateRule(params.updateFunctionNumber)
 	}
 
 	// Setup Lattice
