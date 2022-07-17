@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/Go-L/static/css/main.073c9b0a.css",
+    "main.js": "/Go-L/static/js/main.853ebc65.js",
+    "static/js/787.de953043.chunk.js": "/Go-L/static/js/787.de953043.chunk.js",
+    "static/media/logo.svg": "/Go-L/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/Go-L/index.html",
+    "main.073c9b0a.css.map": "/Go-L/static/css/main.073c9b0a.css.map",
+    "main.853ebc65.js.map": "/Go-L/static/js/main.853ebc65.js.map",
+    "787.de953043.chunk.js.map": "/Go-L/static/js/787.de953043.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.853ebc65.js"
+  ]
+}
