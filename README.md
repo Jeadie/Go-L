@@ -99,3 +99,10 @@ Consider a simple 1D case of: left, cell, right. There are 8 states with a natur
 | 111 | 110 | 101 | 100 | 011 | 010 | 001 | 000 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 1 |
+
+#### 2D Implementation
+In this repo, we consider a similar binary representation for cells: left, cell, right, up, down and a natural indexing $11111, 11110, 11101, ..., 00001, 00000$. This creates $2^5=32$ possible states and therefore $2^{32} = 4294967296$ possible update rules (conveniently fitting in a 32-bit integer). 
+
+
+
+
