@@ -31,6 +31,8 @@ Usage of Go-L:
     	Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE, SPHERE. (default "BORDERED")
   -updatedelay uint
     	Additional period delay between updating rounds of the game, in milliseconds. Does not take into account processing time. (default 200)
+  -updaterule uint
+    	Specify the number associated with the update rule to use. Default to Conway's Game of Life. (default 1994975360)
 ```
 
 ### Border Topologies

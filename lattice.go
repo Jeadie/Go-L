@@ -111,7 +111,7 @@ type LatticeParams struct {
 	topology   string
 }
 
-func ConstructUintLattice(params LatticeParams, updateRule func([][]uint) uint) *Lattice[uint] {
+func ConstructUintLattice(params LatticeParams, updateRule UpdateRuleFn) *Lattice[uint] {
 	return &Lattice[uint]{
 		grid: ConstructUintGrid(params.gridSize, params.aliveRatio),
 		topologyFn: GetTransformation(params.topology),
