@@ -101,8 +101,16 @@ Consider a simple 1D case of: left, cell, right. There are 8 states with a natur
 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 1 |
 
 #### 2D Implementation
-In this repo, we consider a similar binary representation for cells: left, cell, right, up, down and a natural indexing $11111, 11110, 11101, ..., 00001, 00000$. This creates $2^5=32$ possible states and therefore $2^{32} = 4294967296$ possible update rules (conveniently fitting in a 32-bit integer). 
+In this repo, we consider a similar binary representation for cells: left, cell, right, up, down and a natural indexing $11111, 11110, 11101, ..., 00001, 00000$. This creates $2^5=32$ possible states and therefore $2^{32} = 4294967296$ possible update rules (conveniently fitting in a 32-bit integer).
 
+We can now consider the update rule in Conway's Game of Life:
+1. Alive and 3 neighbours: 01111, 10111, 11101, 11110 ([15, 23, 29, 30])
+2. Alive and 2 neighbours: 00111, 01101, 01110, 10101, 10110, 11100 ([7, 13, 14, 21, 22, 28])
+3. Dead and 3 neighbours:  01011, 10011, 11001, 11010 ([11, 19, 25, 26])
+
+Which gives a binary number with 1's at positions: [7, 11, 13, 14, 15, 19, 21, 22, 23, 25, 26, 28, 29, 30]
+    or in binary:  01110110111010001110100010000000
+    or in base 10: 1994975360
 
 
 
