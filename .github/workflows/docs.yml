@@ -1,0 +1,23 @@
+name: Build and Deploy Github Page
+
+# Only run if docs/ has changed
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/**
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-gh-page:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Deploy Github Page
+        run: npm run deploy 
