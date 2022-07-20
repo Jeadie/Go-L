@@ -1,2 +1,4 @@
 github.com/Jeadie/DateDiff v0.0.0-20220326045009-6a7a8d44b728 h1:XdIwmtIDRwVhRLLanNfnM+nQP3tVdoyWYqBVwtNHEbA=
 github.com/Jeadie/DateDiff v0.0.0-20220326045009-6a7a8d44b728/go.mod h1:iZgMbqnBTrwxyQKXr+17N1z5LPDoCWWc32V+s8OEYsc=
+github.com/teamortix/golang-wasm/wasm v0.0.0-20220630082535-f3e518b544db h1:WjuAaAU0DojriAHY/TNV+Km18cImbaOu1K8j1PPrD1M=
+github.com/teamortix/golang-wasm/wasm v0.0.0-20220630082535-f3e518b544db/go.mod h1:nskvTyoGIaAsC+664SkRitVI1ft6dm1xerCr50YZsnY=

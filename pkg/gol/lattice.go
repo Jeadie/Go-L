@@ -112,12 +112,33 @@ func (l *Lattice[T]) SingleIteration() bool {
 	return isUpdated
 }
 
+// MakeGrid converts and copies the internal grid representation to the standard 2D representation.
+func (l *Lattice[T]) MakeGrid() [][]T {
+	result := make([][]T, l.Size())
+
+	for i := uint(0); i < l.Size(); i++ {
+		result[i] = make([]T, l.Size())
+		copy(result[i],l.grid[i*l.Size():(i+1)*l.Size()])
+	}
+	return result
+}
 
 // LatticeParams required to construct a Lattice with type uint (i.e. Lattice[uint]).
 type LatticeParams struct {
 	GridSize   uint
 	AliveRatio float64
 	Topology   string
+}
+
+func ConstructUintLatticeFromInput(inputParams InputParameters) *Lattice[uint] {
+	return ConstructUintLattice(
+		LatticeParams{
+			GridSize:   inputParams.GridSize,
+			AliveRatio: inputParams.AliveRatio,
+			Topology:   inputParams.Topology,
+		},
+		ConstructUpdateRule(inputParams.UpdateFunctionNumber),
+	)
 }
 
 func ConstructUintLattice(params LatticeParams, updateRule UpdateRuleFn) *Lattice[uint] {
