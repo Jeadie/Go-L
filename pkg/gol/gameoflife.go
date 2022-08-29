@@ -2,6 +2,27 @@ package gol
 
 type UpdateRuleFn func([][]uint) uint
 
+
+type InputParameters struct {
+	Iterations  uint `wasm:"iterations" json:"iterations"`
+	GridSize    uint `wasm:"gridSize" json:"gridSize"`
+	AliveRatio  float64 `wasm:"aliveRatio" json:"aliveRatio"`
+	UpdateDelay uint `json:"iterations"` // wasm does not support rendering, only outputting of data
+	Topology    string `wasm:"topology" json:"topology"`
+	UpdateFunctionNumber uint `wasm:"updateFunctionNumber" json:"updateFunctionNumber" `
+}
+type LatticeProcessor func(*Lattice[uint]) error
+const ConwaysGameOfLifeUpdateRuleNumber = 1994975360
+
+
+func ConstructUpdateRule(updateRuleNumber uint) UpdateRuleFn {
+	if updateRuleNumber == ConwaysGameOfLifeUpdateRuleNumber {
+		return CalculateGOLValue
+	} else {
+		return CreateUpdateRule(updateRuleNumber)
+	}
+}
+
 func CalculateGOLValue(box [][]uint) uint {
 	x, y := getMidpoint(box)
 	neighbourCount := countOnesAround(box, x, y)

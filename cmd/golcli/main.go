@@ -9,34 +9,23 @@ import (
 	"time"
 )
 
-type InputParameters struct {
-	iterations  uint
-	gridSize    uint
-	aliveRatio  float64
-	updateDelay uint
-	topology    string
-	updateFunctionNumber uint
-}
-
-const ConwaysGameOfLifeUpdateRuleNumber = 1994975360
-
 type LatticeProcessor func(*gol.Lattice[uint]) error
 
-func parseArguments() (*InputParameters, error) {
-	params := InputParameters{}
+func parseArguments() (*gol.InputParameters, error) {
+	params := gol.InputParameters{}
 
-	flag.UintVar(&params.iterations, "iterations", 100, "Max number of iterations to simulate game of life. If stable solution, will exit early.")
-	flag.UintVar(&params.gridSize, "gridsize", 20, "Length of square grid to define game on.")
-	flag.Float64Var(&params.aliveRatio, "aliveratio", 0.8, "The fraction of squares that start as alive, assigned at random. Domain: [0.0, 1.0].")
-	flag.UintVar(&params.updateDelay, "updatedelay", 200, "Additional period delay between updating rounds of the game, in milliseconds. Does not take into account processing time.")
-	flag.StringVar(&params.topology, "topology", gol.DefaultTopology, "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE, SPHERE.")
-	flag.UintVar(&params.updateFunctionNumber, "updaterule", ConwaysGameOfLifeUpdateRuleNumber, "Specify the number associated with the update rule to use. Default to Conway's Game of Life.")
+	flag.UintVar(&params.Iterations, "iterations", 100, "Max number of iterations to simulate game of life. If stable solution, will exit early.")
+	flag.UintVar(&params.GridSize, "gridsize", 20, "Length of square grid to define game on.")
+	flag.Float64Var(&params.AliveRatio, "aliveratio", 0.8, "The fraction of squares that start as alive, assigned at random. Domain: [0.0, 1.0].")
+	flag.UintVar(&params.UpdateDelay, "updatedelay", 200, "Additional period delay between updating rounds of the game, in milliseconds. Does not take into account processing time.")
+	flag.StringVar(&params.Topology, "topology", gol.DefaultTopology, "Specify the topology of the grid (as a fundamental topology from a parallelograms). Valid parameters: BORDERED, TORUS, KLEIN_BOTTLE, PROJECTIVE_PLANE, SPHERE.")
+	flag.UintVar(&params.UpdateFunctionNumber, "updaterule", gol.ConwaysGameOfLifeUpdateRuleNumber, "Specify the number associated with the update rule to use. Default to Conway's Game of Life.")
 	flag.Parse()
 
-	if gol.IsValidTopology(params.topology) {
+	if gol.IsValidTopology(params.Topology) {
 		return &params, nil
 	}
-	return nil, errors.New(fmt.Sprintf("Invalid topology specified %s. Topology must be one of %s", params.topology, gol.ALLOWED_TOPOLOGIES))
+	return nil, errors.New(fmt.Sprintf("Invalid topology specified %s. Topology must be one of %s", params.Topology, gol.ALLOWED_TOPOLOGIES))
 }
 
 func main() {
@@ -47,28 +36,13 @@ func main() {
 		return
 	}
 
-	// Update rule
-	var updateRule gol.UpdateRuleFn
-	if params.updateFunctionNumber == ConwaysGameOfLifeUpdateRuleNumber {
-		updateRule = gol.CalculateGOLValue
-	} else {
-		updateRule = gol.CreateUpdateRule(params.updateFunctionNumber)
-	}
-
 	// Setup Lattice
-	l := gol.ConstructUintLattice(
-		gol.LatticeParams{
-			GridSize:   params.gridSize,
-			AliveRatio: params.aliveRatio,
-			Topology:   params.topology,
-		},
-		updateRule,
-	)
+	l := gol.ConstructUintLatticeFromInput(*params)
 
 	processors := []LatticeProcessor{Print}
 
 	fmt.Print("\033[H\033[2J")
-	for i := uint(0); i < params.iterations; i++ {
+	for i := uint(0); i < params.Iterations; i++ {
 		if !l.SingleIteration() {break}
 		runProcessors(l, processors)
 	}
