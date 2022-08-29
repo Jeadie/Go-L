@@ -1,15 +1,15 @@
 package gol
 
 import (
-	"constraints"
 	"math"
 	"math/rand"
+
+	"golang.org/x/exp/constraints"
 )
 
 // Node can be used in Lattice method signatures
 type Node constraints.Ordered
 type IntPair = [2]int
-
 
 type Lattice[T Node] struct {
 	grid       []T
@@ -31,14 +31,16 @@ func (l *Lattice[T]) Size() uint {
 
 // GetValue on lattice at coordinate (x, y)
 func (l *Lattice[T]) GetValue(x int, y int) T {
-	nx, ny := l.topologyFn(x, y, 0,0, int(l.n))
-	if nx == -1 || ny == -1 { return l.null }
-	return l.grid[(nx * int(l.n)) + ny]
+	nx, ny := l.topologyFn(x, y, 0, 0, int(l.n))
+	if nx == -1 || ny == -1 {
+		return l.null
+	}
+	return l.grid[(nx*int(l.n))+ny]
 }
 
 // SetValue on lattice at coordinate (x, y) to v
-func (l *Lattice[T]) SetValue(x int, y int, v T)  {
-	nx, ny := l.topologyFn(x, y, 0,0, int(l.n))
+func (l *Lattice[T]) SetValue(x int, y int, v T) {
+	nx, ny := l.topologyFn(x, y, 0, 0, int(l.n))
 	l.grid[(nx*int(l.n))+ny] = v
 }
 
@@ -46,8 +48,8 @@ func (l *Lattice[T]) SetValue(x int, y int, v T)  {
 func (l *Lattice[T]) GetValuesAround(x int, y int, w int) [][]T {
 	rows := make([][]T, 2*w+1)
 
-	for i := 0; i < 2*w + 1; i++ {
-		rows[i] = make([]T, 2*w + 1)
+	for i := 0; i < 2*w+1; i++ {
+		rows[i] = make([]T, 2*w+1)
 		for j := 0; j < 2*w+1; j++ {
 
 			rows[i][j] = l.GetValue(x+i-w, y+j-w)
@@ -58,7 +60,7 @@ func (l *Lattice[T]) GetValuesAround(x int, y int, w int) [][]T {
 
 // Copy a Lattice struct, and all its references, to a new instance (i.e. deep copy).
 func (l *Lattice[T]) Copy() *Lattice[T] {
-	readG :=  make([]T, len(l.grid))
+	readG := make([]T, len(l.grid))
 	copy(readG, l.grid)
 	return &Lattice[T]{
 		grid:       readG,
@@ -107,7 +109,9 @@ func (l *Lattice[T]) SingleIteration() bool {
 	readL := l.Copy()
 	for i := range l.GetLatticeCoordinates() {
 		updated := l.UpdatePair(i, readL)
-		if updated { isUpdated = true }
+		if updated {
+			isUpdated = true
+		}
 	}
 	return isUpdated
 }
@@ -164,13 +168,17 @@ func ConstructUintGrid(n uint, binaryProb float64) []uint {
 	u := make(chan uint)
 	go func(out chan uint, size uint) {
 		for i := 0; i < int(size); i++ {
-			if rand.Float64() < binaryProb { u <- 1 } else { u <- 0 }
+			if rand.Float64() < binaryProb {
+				u <- 1
+			} else {
+				u <- 0
+			}
 		}
 	}(u, n*n)
 
 	rows := make([]uint, n*n)
 	for i := 0; i < int(n*n); i++ {
-		rows[i] = <- u
+		rows[i] = <-u
 	}
 	return rows
 }
