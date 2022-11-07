@@ -3,7 +3,7 @@ Game of Life simulation
 
 I originally wrote a Game of Life model in C, [GOL](https://github.com/Jeadie/GOL/). But I wanted to convert it into Golang for a few reasons:
  - Learn Go
- - Consider more novel topoogies based on border rules (see #border-topologies).
+ - Consider more novel topologies based on border rules (see #border-topologies).
  - Extend GOL simulation for generic update rules.
  - Extend GOL lattice for integer values (i.e. not just 1/0)
  - Run physical system simulations based on applications of cellular automaton:
@@ -11,9 +11,8 @@ I originally wrote a Game of Life model in C, [GOL](https://github.com/Jeadie/GO
    - Population dynamics
    - Ising Models
    - Other interesting cellular automaton: Rule 90, Langton's ant
-   - Boolean binary logic rules (i.e. consider the 1 cell + 4 neighbours as a 5 bit input - 1 bit output to a logic circuit). 
-   - Discretise and extend to 2D my previous research in [rho signalling in cell-cell junctions during collective cell migration](https://github.com/Jeadie/UQ-Winter-Research-Project-2017).
-   - 
+   - Boolean binary logic rules (i.e. consider the 1 cell + 4 neighbours as a 5 bit input - 1 bit output to a logic circuit)
+   - Discretise and extend to 2D my previous research in [rho signalling in cell-cell junctions during collective cell migration](https://github.com/Jeadie/UQ-Winter-Research-Project-2017)
 
 
 ## Usage
